@@ -1,0 +1,12 @@
+[package]
+name = "zerox-go-scalar"
+version = "0.1.0"
+
+[targets.cli]
+kind = "exe"
+main = "src/main.0"
+
+[c.libs.go]
+headers = ["abi/zerox_go.h"]
+lib = ["abi/libzerox_go.a"]
+mode = "static"
