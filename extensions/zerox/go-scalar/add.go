@@ -1,5 +1,5 @@
-package main
+package scalar
 
-func add(left, right int64) int64 {
+func Add(left, right int64) int64 {
 	return left + right
 }
