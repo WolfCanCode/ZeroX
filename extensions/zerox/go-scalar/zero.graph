@@ -1,28 +1,39 @@
 zero-repository-graph v1
 sourceProjection ".0"
 moduleIdentity "package:zerox-go-scalar@0.1.0"
-graphHash "graph:37a2f58e4a133590"
-moduleHash "graph:37a2f58e4a133590"
-sourceHash "src:6d68cf91b74e0055"
+graphHash "graph:38916a916863ee95"
+moduleHash "graph:38916a916863ee95"
+sourceHash "src:b6f257d7aa3ada0a"
 compilerStore schemaVersion:1 shape:"compiler-oriented-tables" semanticOk:true semanticValidity:"shape-valid" sourceProjectionRequired:false sourceMapRequired:false storageInterface:"ProgramGraphStore"
-compilerTables schema:1 package:1 module:1 declaration:2 scope:4 import:1 symbol:3 type:2 effect:0 capability:0 ownership:0 resource:0 node:22 edge:21 projection:1 sourceMap:22
+compilerTables schema:1 package:1 module:1 declaration:6 scope:6 import:1 symbol:7 type:11 effect:0 capability:0 ownership:0 resource:0 node:33 edge:32 projection:1 sourceMap:33
 compilerHashInputs graphHashExcludes:"source-path,line,column,projection-text" nodeHashExcludes:"source-path,line,column,projection-text" idCollisionFallbackMayUse:"source-path,line,column"
 source path:"src/main.0"
-projection path:"src/main.0" text:"extern c \"abi/zerox_go.h\" as goABI\n\nexport c fn main() -> i32 {\n    if goABI.zerox_go_add(5000000000_i64, -11000000000_i64) == -6000000000_i64 {\n        return 0\n    }\n    return 1\n}\n"
+projection path:"src/main.0" text:"extern c \"abi/zerox_go.h\" as goABI\n\nfn call_go(left: i64, right: i64, label: String) -> i64 {\n    return 0_i64\n}\n\nexport c fn main() -> i32 {\n    if call_go(5000000000_i64, -11000000000_i64, \"demo\") == -6000000000_i64 {\n        return 0\n    }\n    return 1\n}\n"
 nodeHash node:"#mod_2403b626" hash:"nodehash:1523597da939a24c"
 nodeHash node:"#cimp_80fc09b6" hash:"nodehash:b18d3eabdf0055dd"
+nodeHash node:"#decl_837fbb64" hash:"nodehash:bf025b284121f2bf"
+nodeHash node:"#param_353528f0" hash:"nodehash:1596b7d418fd3a9c"
+nodeHash node:"#type_de9f4415" hash:"nodehash:633e7f0b5bdf2929"
+nodeHash node:"#param_40247311" hash:"nodehash:69b8911cfe0fd46d"
+nodeHash node:"#type_0069bb3b" hash:"nodehash:633e7f0b5bdf2929"
+nodeHash node:"#param_55931c3c" hash:"nodehash:632b0b2d6665d43d"
+nodeHash node:"#type_9af2f2a9" hash:"nodehash:8eb3e25a4a6e96a1"
+nodeHash node:"#type_4f302a04" hash:"nodehash:633e7f0b5bdf2929"
+nodeHash node:"#block_509e3a8a" hash:"nodehash:1de8eb7e6c48dda8"
+nodeHash node:"#stmt_f2222a08" hash:"nodehash:1e7a9ae04efccdcd"
+nodeHash node:"#expr_76f94060" hash:"nodehash:6847cec12bb49372"
 nodeHash node:"#decl_55e67c88" hash:"nodehash:93deb24c5c2ff59b"
 nodeHash node:"#type_c72ab000" hash:"nodehash:c98c668193aa1c4a"
 nodeHash node:"#block_d0480327" hash:"nodehash:1de8eb7e6c48dda8"
 nodeHash node:"#stmt_acb0308b" hash:"nodehash:9a87fc5566be91e4"
 nodeHash node:"#expr_d97f40c3" hash:"nodehash:50b126f5d63b6125"
-nodeHash node:"#expr_2a5c4220" hash:"nodehash:def59ac2966887f9"
-nodeHash node:"#expr_8bd3be80" hash:"nodehash:8d9b62b68b6d7d6c"
-nodeHash node:"#expr_19a9cbc0" hash:"nodehash:fda4341ccd1e677e"
-nodeHash node:"#expr_3179ca7c" hash:"nodehash:8d14fac3831c6e03"
-nodeHash node:"#expr_5989787a" hash:"nodehash:303467da98470752"
-nodeHash node:"#expr_d7ac5662" hash:"nodehash:fb4aa1e1106dea90"
-nodeHash node:"#expr_8584618e" hash:"nodehash:0249409c45bf4048"
+nodeHash node:"#expr_5f37b459" hash:"nodehash:08c681618ca2ff9e"
+nodeHash node:"#expr_afa0fc17" hash:"nodehash:7157e8fa33b7c47b"
+nodeHash node:"#expr_229e2090" hash:"nodehash:8d14fac3831c6e03"
+nodeHash node:"#expr_5620763e" hash:"nodehash:303467da98470752"
+nodeHash node:"#expr_a4e9ea0c" hash:"nodehash:fb4aa1e1106dea90"
+nodeHash node:"#expr_29f6c980" hash:"nodehash:0249409c45bf4048"
+nodeHash node:"#expr_27326013" hash:"nodehash:8fd6ae9972fcb166"
 nodeHash node:"#expr_536ffda3" hash:"nodehash:303467da98470752"
 nodeHash node:"#expr_cf63bd7e" hash:"nodehash:fb4aa1e1106dea90"
 nodeHash node:"#expr_c2f68ac2" hash:"nodehash:b6d97d1e88b2f596"
@@ -36,40 +47,62 @@ graph
 zero-graph v1
 origin source-text
 module "package:zerox-go-scalar@0.1.0"
-hash "graph:37a2f58e4a133590"
+hash "graph:38916a916863ee95"
 
 node #mod_2403b626 Module name:"main" path:"src/main.0" line:1 column:1
 node #cimp_80fc09b6 CImport name:"goABI" value:"abi/zerox_go.h" path:"src/main.0" line:1 column:1
-node #decl_55e67c88 Function name:"main" type:"i32" path:"src/main.0" line:3 column:1 exportC:true
-node #type_c72ab000 TypeRef type:"i32" path:"src/main.0" line:3 column:1
-node #block_d0480327 Block name:"body" path:"src/main.0" line:3 column:1
-node #stmt_acb0308b If path:"src/main.0" line:4 column:5
-node #expr_d97f40c3 Call name:"==" path:"src/main.0" line:4 column:61
-node #expr_2a5c4220 MethodCall name:"zerox_go_add" path:"src/main.0" line:4 column:26
-node #expr_8bd3be80 FieldAccess name:"zerox_go_add" path:"src/main.0" line:4 column:14
-node #expr_19a9cbc0 Identifier name:"goABI" path:"src/main.0" line:4 column:8
-node #expr_3179ca7c Literal value:"5000000000_i64" path:"src/main.0" line:4 column:27
-node #expr_5989787a Call name:"-" path:"src/main.0" line:4 column:43
-node #expr_d7ac5662 Literal value:"0" path:"src/main.0" line:4 column:43
-node #expr_8584618e Literal value:"11000000000_i64" path:"src/main.0" line:4 column:44
-node #expr_536ffda3 Call name:"-" path:"src/main.0" line:4 column:64
-node #expr_cf63bd7e Literal value:"0" path:"src/main.0" line:4 column:64
-node #expr_c2f68ac2 Literal value:"6000000000_i64" path:"src/main.0" line:4 column:65
-node #block_51a7cb8c Block name:"then" path:"src/main.0" line:4 column:5
-node #stmt_4ee3c65e Return path:"src/main.0" line:5 column:9
-node #expr_7ed9d835 Literal value:"0" path:"src/main.0" line:5 column:16
-node #stmt_27037da2 Return path:"src/main.0" line:7 column:5
-node #expr_37548de3 Literal value:"1" path:"src/main.0" line:7 column:12
+node #decl_837fbb64 Function name:"call_go" type:"i64" path:"src/main.0" line:3 column:1
+node #param_353528f0 Param name:"left" type:"i64" path:"src/main.0" line:3 column:12
+node #type_de9f4415 TypeRef type:"i64" path:"src/main.0" line:3 column:12
+node #param_40247311 Param name:"right" type:"i64" path:"src/main.0" line:3 column:23
+node #type_0069bb3b TypeRef type:"i64" path:"src/main.0" line:3 column:23
+node #param_55931c3c Param name:"label" type:"String" path:"src/main.0" line:3 column:35
+node #type_9af2f2a9 TypeRef type:"String" path:"src/main.0" line:3 column:35
+node #type_4f302a04 TypeRef type:"i64" path:"src/main.0" line:3 column:1
+node #block_509e3a8a Block name:"body" path:"src/main.0" line:3 column:1
+node #stmt_f2222a08 Return path:"src/main.0" line:4 column:5
+node #expr_76f94060 Literal value:"0_i64" path:"src/main.0" line:4 column:12
+node #decl_55e67c88 Function name:"main" type:"i32" path:"src/main.0" line:7 column:1 exportC:true
+node #type_c72ab000 TypeRef type:"i32" path:"src/main.0" line:7 column:1
+node #block_d0480327 Block name:"body" path:"src/main.0" line:7 column:1
+node #stmt_acb0308b If path:"src/main.0" line:8 column:5
+node #expr_d97f40c3 Call name:"==" path:"src/main.0" line:8 column:58
+node #expr_5f37b459 Call name:"call_go" path:"src/main.0" line:8 column:15
+node #expr_afa0fc17 Identifier name:"call_go" path:"src/main.0" line:8 column:8
+node #expr_229e2090 Literal value:"5000000000_i64" path:"src/main.0" line:8 column:16
+node #expr_5620763e Call name:"-" path:"src/main.0" line:8 column:32
+node #expr_a4e9ea0c Literal value:"0" path:"src/main.0" line:8 column:32
+node #expr_29f6c980 Literal value:"11000000000_i64" path:"src/main.0" line:8 column:33
+node #expr_27326013 Literal type:"String" value:"demo" path:"src/main.0" line:8 column:50
+node #expr_536ffda3 Call name:"-" path:"src/main.0" line:8 column:61
+node #expr_cf63bd7e Literal value:"0" path:"src/main.0" line:8 column:61
+node #expr_c2f68ac2 Literal value:"6000000000_i64" path:"src/main.0" line:8 column:62
+node #block_51a7cb8c Block name:"then" path:"src/main.0" line:8 column:5
+node #stmt_4ee3c65e Return path:"src/main.0" line:9 column:9
+node #expr_7ed9d835 Literal value:"0" path:"src/main.0" line:9 column:16
+node #stmt_27037da2 Return path:"src/main.0" line:11 column:5
+node #expr_37548de3 Literal value:"1" path:"src/main.0" line:11 column:12
 edge #mod_2403b626 cImport #cimp_80fc09b6 order:0
-edge #mod_2403b626 function #decl_55e67c88 order:0
+edge #mod_2403b626 function #decl_837fbb64 order:0
+edge #decl_837fbb64 param #param_353528f0 order:0
+edge #param_353528f0 type #type_de9f4415
+edge #decl_837fbb64 param #param_40247311 order:1
+edge #param_40247311 type #type_0069bb3b
+edge #decl_837fbb64 param #param_55931c3c order:2
+edge #param_55931c3c type #type_9af2f2a9
+edge #decl_837fbb64 returnType #type_4f302a04
+edge #stmt_f2222a08 expr #expr_76f94060
+edge #block_509e3a8a statement #stmt_f2222a08 order:0
+edge #decl_837fbb64 body #block_509e3a8a
+edge #mod_2403b626 function #decl_55e67c88 order:1
 edge #decl_55e67c88 returnType #type_c72ab000
-edge #expr_8bd3be80 left #expr_19a9cbc0
-edge #expr_2a5c4220 left #expr_8bd3be80
-edge #expr_2a5c4220 arg #expr_3179ca7c order:0
-edge #expr_5989787a left #expr_d7ac5662
-edge #expr_5989787a right #expr_8584618e order:1
-edge #expr_2a5c4220 arg #expr_5989787a order:1
-edge #expr_d97f40c3 left #expr_2a5c4220
+edge #expr_5f37b459 left #expr_afa0fc17
+edge #expr_5f37b459 arg #expr_229e2090 order:0
+edge #expr_5620763e left #expr_a4e9ea0c
+edge #expr_5620763e right #expr_29f6c980 order:1
+edge #expr_5f37b459 arg #expr_5620763e order:1
+edge #expr_5f37b459 arg #expr_27326013 order:2
+edge #expr_d97f40c3 left #expr_5f37b459
 edge #expr_536ffda3 left #expr_cf63bd7e
 edge #expr_536ffda3 right #expr_c2f68ac2 order:1
 edge #expr_d97f40c3 right #expr_536ffda3 order:1

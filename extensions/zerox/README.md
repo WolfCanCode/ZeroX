@@ -24,7 +24,8 @@ bash extensions/zerox/scripts/smoke-go-scalar.sh
 
 The Go smoke test builds in a disposable directory. It generates the ABI
 binding twice and requires identical files, checks the generated declarations
-against cgo's header, and runs the native executable built from `zero.graph`.
+against cgo's header, applies a checked Go call patch to `zero.graph`, and
+runs the native executable.
 It also tests rejection of incompatible Zero arguments, unsupported and
 generic Go signatures, and process termination on an uncaught Go panic.
 
@@ -42,6 +43,52 @@ fixture uses the fixed C symbol `zerox_go_add`. The metadata records a
 dependency's resolved module version or `local` for the current module.
 Build the generated wrapper from the same Go module so dependency resolution
 uses the same `go.mod` and `go.sum`.
+
+## Discover and plan a Go call
+
+From the repository root, prepare a disposable copy of the example package
+with its generated header and archive:
+
+```sh
+repo=$PWD
+work=$(mktemp -d)
+mkdir -p "$work/app/abi"
+cp extensions/zerox/go-scalar/{zero.toml,zero.graph} "$work/app/"
+(
+  cd extensions/zerox
+  go run -mod=readonly ./cmd/zerox-bindgen -package ./go-scalar -out "$work/binding"
+  CGO_ENABLED=1 go build -mod=readonly -trimpath -buildmode=c-archive \
+    -o "$work/app/abi/libzerox_go.a" "$work/binding/bridge.go"
+)
+cp "$work/binding/zerox_go.h" "$work/app/abi/"
+```
+
+Run discovery against the package graph, then use the returned graph hash
+to plan a call in the `call_go` function:
+
+```sh
+cli=extensions/zerox/scripts/zerox-go.mjs
+metadata="$work/binding/binding.json"
+node "$cli" discover "$work/app" "$metadata" > "$work/symbol.json"
+cat "$work/symbol.json"
+graph_hash=$(node -p 'require(process.argv[1]).graphHash' "$work/symbol.json")
+node "$cli" plan "$work/app" "$metadata" "$graph_hash" call_go left right \
+  --allow-foreign > "$work/call.patch"
+cat "$work/call.patch"
+(
+  cd "$work/app"
+  "$repo/bin/zero" patch . "$work/call.patch"
+  "$repo/bin/zero" run --target linux-x64 .
+)
+```
+
+`discover` pairs the generated metadata with the C signature in
+`zero inspect --json`. `plan` requires explicit consent for foreign
+effects, checks both arguments against Zero's parameter types, and runs
+`zero patch --check-only`. It accepts `i64` parameters or signed
+`i64` literals and replaces the complete body of the selected function.
+Applying the patch changes `zero.graph` through Zerolang. If the graph
+hash changes, rerun discovery and review a new patch.
 
 The native executable links the Go runtime. Treat imported Go calls as foreign
 code with process-level effects. An uncaught Go panic terminates the process.

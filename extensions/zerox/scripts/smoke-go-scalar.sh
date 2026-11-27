@@ -34,6 +34,47 @@ cd "$work/app"
 # Check that the compiler-facing declaration matches cgo's generated ABI.
 printf '#include "zerox_go.h"\n#include "libzerox_go.h"\n' | cc -Iabi -x c -fsyntax-only -
 
+export ZERO_BIN="$zero"
+cli="$extension/scripts/zerox-go.mjs"
+metadata="$work/binding/binding.json"
+node "$cli" discover . "$metadata" > "$work/discovery.json"
+graph_hash=$(node -p 'require(process.argv[1]).graphHash' "$work/discovery.json")
+
+if node "$cli" plan . "$metadata" "$graph_hash" call_go left right > "$work/no-consent.patch" 2> "$work/no-consent.log"; then
+  echo 'Planned a foreign call without consent.' >&2
+  exit 1
+fi
+grep -F 'requires --allow-foreign' "$work/no-consent.log" >/dev/null
+test ! -s "$work/no-consent.patch"
+
+if node "$cli" plan . "$metadata" "$graph_hash" call_go label right --allow-foreign > "$work/invalid.patch" 2> "$work/invalid-plan.log"; then
+  echo 'Planned a call with a String argument in an i64 position.' >&2
+  exit 1
+fi
+grep -F 'Argument 1 (label) must be an i64 parameter' "$work/invalid-plan.log" >/dev/null
+test ! -s "$work/invalid.patch"
+
+node "$cli" plan . "$metadata" "$graph_hash" call_go left right --allow-foreign > "$work/call.patch"
+cmp zero.graph "$fixture/zero.graph"
+"$zero" patch . "$work/call.patch"
+cp zero.graph "$work/applied.graph"
+if "$zero" patch --json . "$work/call.patch" > "$work/stale.json"; then
+  echo 'Reapplied a stale foreign-call patch.' >&2
+  exit 1
+fi
+node --input-type=module - "$work/stale.json" "$work/discovery.json" <<'JS'
+import assert from 'node:assert/strict'
+import { readFileSync } from 'node:fs'
+
+const [stale, discovery] = process.argv.slice(2).map(path => JSON.parse(readFileSync(path)))
+assert.equal(stale.diagnostic.code, 'GPH002')
+assert.equal(discovery.callee, 'goABI.zerox_go_add')
+assert.equal(discovery.goSymbol, 'Add')
+assert.equal(discovery.requiresForeignConsent, true)
+JS
+cmp zero.graph "$work/applied.graph"
+echo 'Go FFI: discovery, effect consent, type checks and stale patch rejection passed'
+
 "$zero" inspect --json --target linux-x64 . > "$work/inspect.json"
 "$zero" build --json --backend direct --target linux-x64 --out ./go-scalar . > "$work/build.json"
 ./go-scalar
@@ -66,7 +107,7 @@ echo 'Go FFI: graph-only native build and signed 64-bit result passed'
 
 # Run a negative Zero check against a disposable projection.
 "$zero" export .
-sed -i 's/5000000000_i64/"invalid"/' src/main.0
+sed -i 's/zerox_go_add(left, right)/zerox_go_add(label, right)/' src/main.0
 if "$zero" import --json . > "$work/invalid-zero.json"; then
   echo 'Zero accepted a string at an int64_t ABI boundary.' >&2
   exit 1
@@ -78,7 +119,7 @@ import { readFileSync } from 'node:fs'
 const result = JSON.parse(readFileSync(process.argv[2]))
 assert(result.diagnostics.some(item => item.code === 'STD003' && item.message.includes('zerox_go_add')))
 JS
-cmp zero.graph "$fixture/zero.graph"
+cmp zero.graph "$work/applied.graph"
 rm src/main.0
 echo 'Go FFI: Zero rejected an incompatible call'
 
